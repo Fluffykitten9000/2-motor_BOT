@@ -31,10 +31,11 @@ public class autoIMU extends LinearOpMode {
     private DcMotor frd = null;
     private DcMotor bld = null;
     private DcMotor brd = null;
-    //the accelerometer calibrate
+    //the accelerometer calibrate data
     private double acc[] = new double[3];
     private double accOff[] = new double[3];
 
+    //timer
     private ElapsedTime runtime = new ElapsedTime();
 
     BNO055IMU imu;
@@ -44,11 +45,13 @@ public class autoIMU extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //set motor hardwareMap
         frd = hardwareMap.get(DcMotor.class, "frd");
         fld = hardwareMap.get(DcMotor.class, "fld");
         brd = hardwareMap.get(DcMotor.class, "brd");
         bld = hardwareMap.get(DcMotor.class, "bld");
 
+        //set imu map and settings
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -60,6 +63,7 @@ public class autoIMU extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        //set motor direction
         fld.setDirection(DcMotor.Direction.FORWARD);
         frd.setDirection(DcMotor.Direction.REVERSE);
         bld.setDirection(DcMotor.Direction.FORWARD);
@@ -67,7 +71,7 @@ public class autoIMU extends LinearOpMode {
         telemetry.addData("Status", "calibrating");
         telemetry.update();
 
-        //stop and get ready for epicness
+        //stop and get ready for epicness (reset encoders)
         fld.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frd.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bld.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -81,11 +85,14 @@ public class autoIMU extends LinearOpMode {
 
         intACC();
 
+        //done calibrating message
         telemetry.addData("Status", "done calibrating");
         telemetry.update();
 
+        //wait for start
         waitForStart();
         runtime.reset();
+        //message for start
         telemetry.addData("Status", "Starting");
         telemetry.update();
         doYourSTUFF();
@@ -93,36 +100,46 @@ public class autoIMU extends LinearOpMode {
         telemetry.update();
     }
 
+    //this holds all of what it will do in auto
     public void doYourSTUFF() {
         if (opModeIsActive()) {
             gyroDrive(0.2, 10000,1000);
         }
     }
 
+    //drive using imu gyro
     public void gyroDrive(double speed, double time, double distance) {
+        //number that tells the max rot in a frame
         double MAX_SCALE_ANGLE = 90;
+        //number that tells the scale factor so we don't get in a feed back loop of doom
         double SCALED_NUM = 5;
+        //distance from start forward
         double MY_DISTANCE = 0;
         intACC();
+        //loop that makes shore that its on track
         while (opModeIsActive()&&runtime.milliseconds()<time&&MY_DISTANCE<=distance) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+            //power the motors
             fld.setPower(Range.clip(speed + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             frd.setPower(Range.clip(speed + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             bld.setPower(Range.clip(speed + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             brd.setPower(Range.clip(speed + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             MY_DISTANCE+=ACC()[1];
+            // tell driver whats going on
             telemetry.addLine()
                     .addData("distance", MY_DISTANCE);
             telemetry.addLine()
                     .addData("acc", ACC()[1]);
             telemetry.update();
         }
+        //set motor power back to 0
         fld.setPower(0);
         frd.setPower(0);
         bld.setPower(0);
         brd.setPower(0);
     }
 
+    // both of these are for help with the accelerometer
     public void intACC() {
         imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
         gravity = imu.getGravity();
