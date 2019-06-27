@@ -150,19 +150,19 @@ public class autoIMU extends LinearOpMode {
         double MAX_SCALE_ANGLE = 180;
         //number that tells the scale factor so we don't get in a feed back loop of doom
         double SCALED_NUM = 10;
+        //number for accuracy limit
+        double LIMIT = 1;
+        //reset acc
         intACC();
-        double smallAngle = Math.round(angles.thirdAngle);//Double.parseDouble(String.format("%.1f", angles.thirdAngle));
         //loop that makes shore that its on track
-        while (opModeIsActive()&&runtime.milliseconds()<time&&smallAngle-angle>1) {
-            smallAngle = Math.round(angles.thirdAngle);
+        while (opModeIsActive()&&runtime.milliseconds()<time) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
             fld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
             frd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
             bld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
             brd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
-            telemetry.addData(">",smallAngle);
-            telemetry.update();
+            if (Math.abs(angle-(angles.thirdAngle*-1))<LIMIT) break;
         }
         //set motor power back to 0
         fld.setPower(0);
