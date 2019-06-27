@@ -138,6 +138,10 @@ public class autoIMU extends LinearOpMode {
         bld.setPower(0);
         brd.setPower(0);
     }
+    
+    Public void gyroTurn(double angle) {
+        
+    }
 
     // both of these are for help with the accelerometer
     public void intACC() {
