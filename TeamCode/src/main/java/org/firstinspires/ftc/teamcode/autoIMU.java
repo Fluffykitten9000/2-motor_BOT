@@ -104,7 +104,7 @@ public class autoIMU extends LinearOpMode {
     public void doYourSTUFF() {
         if (opModeIsActive()) {
             //gyroDrive(0.2, 10000,1000);
-            gyroTurn(0.2, 360, 5000);
+            gyroTurn(0.5, 90, 20000);
         }
     }
 
@@ -146,16 +146,14 @@ public class autoIMU extends LinearOpMode {
         //number that tells the scale factor so we don't get in a feed back loop of doom
         double SCALED_NUM = 20;
         intACC();
-        //number that shows the angle of the robot
-        double MY_ANGLE = 0;
         //loop that makes shore that its on track
-        while (opModeIsActive()&&runtime.milliseconds()<time&&MY_ANGLE<=angle) {
+        while (opModeIsActive()&&runtime.milliseconds()<time&&angles.thirdAngle + angle==angle) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
-            fld.setPower(Range.clip(Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            frd.setPower(Range.clip(-Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            bld.setPower(Range.clip(Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            brd.setPower(Range.clip(-Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            fld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            frd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            bld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            brd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
         }
         //set motor power back to 0
         fld.setPower(0);
