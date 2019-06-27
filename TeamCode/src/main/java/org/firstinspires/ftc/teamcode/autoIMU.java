@@ -144,16 +144,17 @@ public class autoIMU extends LinearOpMode {
     }
     
     public void gyroTurn(double speed,double angle,double time) {
+        angle *= -1;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         //number that tells the max rot in a frame
         double MAX_SCALE_ANGLE = 180;
         //number that tells the scale factor so we don't get in a feed back loop of doom
         double SCALED_NUM = 10;
         intACC();
-        double smallAngle = Double.parseDouble(String.format("%.2f", angles.thirdAngle));
+        double smallAngle = Math.round(angles.thirdAngle);//Double.parseDouble(String.format("%.1f", angles.thirdAngle));
         //loop that makes shore that its on track
         while (opModeIsActive()&&runtime.milliseconds()<time&&smallAngle!=angle) {
-            smallAngle = Double.parseDouble(String.format("%.1f", angles.thirdAngle));
+            smallAngle = Math.round(angles.thirdAngle);
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
             fld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
