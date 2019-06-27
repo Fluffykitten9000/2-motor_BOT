@@ -21,6 +21,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.sql.Time;
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.text.NumberFormat;
 import java.util.Timer;
 
 @Autonomous(name="IMU test", group="auto with IMU")
@@ -141,19 +144,23 @@ public class autoIMU extends LinearOpMode {
     }
     
     public void gyroTurn(double speed,double angle,double time) {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         //number that tells the max rot in a frame
-        double MAX_SCALE_ANGLE = 360;
+        double MAX_SCALE_ANGLE = 180;
         //number that tells the scale factor so we don't get in a feed back loop of doom
-        double SCALED_NUM = 20;
+        double SCALED_NUM = 10;
         intACC();
         //loop that makes shore that its on track
-        while (opModeIsActive()&&runtime.milliseconds()<time&&angles.thirdAngle + angle==angle) {
+        while (opModeIsActive()&&runtime.milliseconds()<time&&Double.parseDouble(String.format("%.2f", angles.thirdAngle + angle))!=angle) {
+            telemetry.addData("wtf is this number",Double.parseDouble(String.format("%.2f", angles.thirdAngle + angle)));
+            telemetry.update();
+            sleep(5000);
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
-            fld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            frd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            bld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            brd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            fld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
+            frd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
+            bld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
+            brd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
         }
         //set motor power back to 0
         fld.setPower(0);
