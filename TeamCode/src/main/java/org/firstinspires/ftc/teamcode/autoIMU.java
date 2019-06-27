@@ -103,7 +103,7 @@ public class autoIMU extends LinearOpMode {
     //this holds all of what it will do in auto
     public void doYourSTUFF() {
         if (opModeIsActive()) {
-            gyroDrive(0.2, 10000,1000);
+            //gyroDrive(0.2, 10000,1000);
             gyroTurn(0.2, 360, 5000);
         }
     }
