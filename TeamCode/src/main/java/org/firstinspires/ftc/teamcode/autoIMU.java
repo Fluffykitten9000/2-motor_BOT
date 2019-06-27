@@ -123,20 +123,22 @@ public class autoIMU extends LinearOpMode {
 
     public void doYourSTUFF() {
         if (opModeIsActive()) {
-            gyroDrive(0.2, 3000);
+            gyroDrive(0.2, 10000,1000);
         }
     }
 
-    public void gyroDrive(double speed, double time) {
+    public void gyroDrive(double speed, double time, double distance) {
         double MAX_SCALE_ANGLE = 90;
         double SCALED_NUM = 5;
+        double MY_DISTANCE = 0;
         intACC();
-        while (opModeIsActive()&&runtime.milliseconds()<time) {
+        while (opModeIsActive()&&runtime.milliseconds()<time&&MY_DISTANCE<=distance) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             fld.setPower(Range.clip(speed + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             frd.setPower(Range.clip(speed + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             bld.setPower(Range.clip(speed + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             brd.setPower(Range.clip(speed + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            MY_DISTANCE+=ACC()[1];
         }
         fld.setPower(0);
         frd.setPower(0);
