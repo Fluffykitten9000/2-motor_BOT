@@ -119,11 +119,11 @@ public class autoIMU extends LinearOpMode {
         //loop that makes shore that its on track
         while (opModeIsActive()&&runtime.milliseconds()<time&&MY_DISTANCE<=distance) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-            //power the motors
-            fld.setPower(Range.clip(speed + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            frd.setPower(Range.clip(speed + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            bld.setPower(Range.clip(speed + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            brd.setPower(Range.clip(speed + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            //power the motors----------------------\/----i don't know why it needs this to keep the front motors the same pace as the back
+            fld.setPower(Range.clip(speed + 0.8 + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            frd.setPower(Range.clip(speed + 0.8 + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            bld.setPower(Range.clip(speed + 0 + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            brd.setPower(Range.clip(speed + 0 + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
             MY_DISTANCE+=ACC()[1];
             // tell driver whats going on
             telemetry.addLine()
