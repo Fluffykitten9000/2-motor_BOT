@@ -153,7 +153,7 @@ public class autoIMU extends LinearOpMode {
         intACC();
         double smallAngle = Math.round(angles.thirdAngle);//Double.parseDouble(String.format("%.1f", angles.thirdAngle));
         //loop that makes shore that its on track
-        while (opModeIsActive()&&runtime.milliseconds()<time&&smallAngle!=angle) {
+        while (opModeIsActive()&&runtime.milliseconds()<time&&smallAngle-angle>1) {
             smallAngle = Math.round(angles.thirdAngle);
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
