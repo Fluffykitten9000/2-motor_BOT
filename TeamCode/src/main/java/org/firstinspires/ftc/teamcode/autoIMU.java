@@ -126,10 +126,10 @@ public class autoIMU extends LinearOpMode {
         while (opModeIsActive()&&runtime.milliseconds()<time+T) {//&&MY_DISTANCE<=distance
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors----------------------\/----i don't know why it needs this to keep the front motors the same pace as the back
-            fld.setPower(Range.clip(speed + 0.8 + Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            frd.setPower(Range.clip(speed + 0.8 + -Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            bld.setPower(Range.clip(speed + 0 + Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            brd.setPower(Range.clip(speed + 0 + -Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            bld.setPower(Range.clip(speed + Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            brd.setPower(Range.clip(speed + -Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            fld.setPower(Range.clip(bld.getPower(),-1,1));
+            frd.setPower(Range.clip(brd.getPower(),-1,1));
             MY_DISTANCE-=ACC()[1];
             // tell driver whats going on
             telemetry.addLine()
@@ -161,10 +161,10 @@ public class autoIMU extends LinearOpMode {
         while (opModeIsActive()&&runtime.milliseconds()<time+T) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
-            fld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
-            frd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
             bld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
             brd.setPower(Range.clip(-Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
+            fld.setPower(bld.getPower());
+            frd.setPower(brd.getPower());
             if (Math.abs(angle-(angles.thirdAngle*-1))<LIMIT) break;
         }
         //set motor power back to 0
