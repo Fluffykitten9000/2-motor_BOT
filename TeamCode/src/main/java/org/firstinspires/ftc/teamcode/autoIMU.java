@@ -96,7 +96,7 @@ public class autoIMU extends LinearOpMode {
     //this holds all of what it will do in auto
     private void doYourSTUFF() {
         if (opModeIsActive()) {
-            gyroTurn(0.5, 90, 30000);
+            gyroTurn(0.4, 90, 30000);
         }
     }
 
@@ -154,7 +154,7 @@ public class autoIMU extends LinearOpMode {
             frd.setPower(right);
             bld.setPower(left);
             brd.setPower(right);
-            if (Math.abs(angle-(angles.thirdAngle*-1))<LIMIT) break;
+            if (Math.abs(angle-(angles.thirdAngle))<LIMIT) break;
             sleep(1);
         }
         //set motor power back to 0
