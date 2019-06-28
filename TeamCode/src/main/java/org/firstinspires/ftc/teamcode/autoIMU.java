@@ -106,19 +106,19 @@ public class autoIMU extends LinearOpMode {
     //this holds all of what it will do in auto
     public void doYourSTUFF() {
         if (opModeIsActive()) {
-            gyroDrive(0.5, 1000,1);
-            gyroTurn(0.5, 90, 5000);
-            gyroDrive(0.5, 1000,1);
-            gyroTurn(0.5, 90, 5000);
-            gyroDrive(0.5, 1000,1);
-            gyroTurn(0.5, 90, 5000);
-            gyroDrive(0.5, 1000,1);
-            gyroTurn(0.5, 90, 5000);
+            gyroTurn(0.3, 90, 5000);
+            gyroDrive(0.3, 5000,90,1);
+            gyroTurn(0.3, 180, 5000);
+            gyroDrive(0.3, 5000,180,1);
+            gyroTurn(0.3, 270, 5000);
+            gyroDrive(0.3, 5000,270,1);
+            gyroTurn(0.3, 360, 5000);
+            gyroDrive(0.3, 5000,360,1);
         }
     }
 
     //drive using imu gyro
-    public void gyroDrive(double speed, double time, double distance) {
+    public void gyroDrive(double speed, double time, double angleOFF, double distance) {
         double T = runtime.milliseconds();
         //number that tells the max rot in a frame
         double MAX_SCALE_ANGLE = 90;
@@ -131,11 +131,11 @@ public class autoIMU extends LinearOpMode {
         while (opModeIsActive()&&runtime.milliseconds()<time+T&&MY_DISTANCE<=distance) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors----------------------\/----i don't know why it needs this to keep the front motors the same pace as the back
-            fld.setPower(Range.clip(speed + 0.8 + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            frd.setPower(Range.clip(speed + 0.8 + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            bld.setPower(Range.clip(speed + 0 + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            brd.setPower(Range.clip(speed + 0 + -Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
-            MY_DISTANCE+=ACC()[1];
+            fld.setPower(Range.clip(speed + 0.8 + Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            frd.setPower(Range.clip(speed + 0.8 + -Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            bld.setPower(Range.clip(speed + 0 + Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            brd.setPower(Range.clip(speed + 0 + -Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
+            MY_DISTANCE-=ACC()[1];
             // tell driver whats going on
             telemetry.addLine()
                     .addData("distance", MY_DISTANCE);
@@ -159,7 +159,7 @@ public class autoIMU extends LinearOpMode {
         //number that tells the scale factor so we don't get in a feed back loop of doom
         double SCALED_NUM = 10;
         //number for accuracy limit
-        double LIMIT = 0.8;
+        double LIMIT = 0.5;
         //reset acc
         intACC();
         //loop that makes shore that its on track
