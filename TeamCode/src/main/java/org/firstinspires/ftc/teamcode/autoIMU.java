@@ -3,15 +3,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -35,10 +31,10 @@ public class autoIMU extends LinearOpMode {
     //timer
     private ElapsedTime runtime = new ElapsedTime();
 
-    BNO055IMU imu;
+    private BNO055IMU imu;
 
-    Orientation angles;
-    Acceleration gravity;
+    private Orientation angles;
+    private Acceleration gravity;
 
     @Override
     public void runOpMode() {
@@ -98,7 +94,7 @@ public class autoIMU extends LinearOpMode {
     }
 
     //this holds all of what it will do in auto
-    public void doYourSTUFF() {
+    private void doYourSTUFF() {
         if (opModeIsActive()) {
             gyroDrive(0.2, 1000,0,5);
             gyroTurn(0.2, 90, 5000);
@@ -113,7 +109,7 @@ public class autoIMU extends LinearOpMode {
     }
 
     //drive using imu gyro
-    public void gyroDrive(double speed, double time, double angleOFF, double distance) {
+    private void gyroDrive(double speed, double time, double angleOFF, double distance) {
         double T = runtime.milliseconds();
         //number that tells the max rot in a frame
         double MAX_SCALE_ANGLE = 90;
@@ -143,7 +139,7 @@ public class autoIMU extends LinearOpMode {
         brd.setPower(0);
     }
     
-    public void gyroTurn(double speed,double angle,double time) {
+    private void gyroTurn(double speed,double angle,double time) {
         double T = runtime.milliseconds();
         angle *= -1;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
@@ -173,7 +169,7 @@ public class autoIMU extends LinearOpMode {
     }
 
     // both of these are for help with the accelerometer
-    public void intACC() {
+    private void intACC() {
         imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
         gravity = imu.getGravity();
         acc[0] = gravity.xAccel;
@@ -184,7 +180,7 @@ public class autoIMU extends LinearOpMode {
         accOff[2] = gravity.zAccel;
         imu.stopAccelerationIntegration();
     }
-    public double[] ACC() {
+    private double[] ACC() {
         imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
         gravity = imu.getGravity();
         acc[0] = gravity.xAccel;
