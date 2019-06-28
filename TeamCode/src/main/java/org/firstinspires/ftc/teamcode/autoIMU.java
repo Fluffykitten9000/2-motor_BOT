@@ -20,12 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-import java.sql.Time;
-import java.text.DecimalFormat;
-import java.text.Format;
-import java.text.NumberFormat;
-import java.util.Timer;
-
 @Autonomous(name="IMU test", group="auto with IMU")
 public class autoIMU extends LinearOpMode {
 
@@ -106,10 +100,11 @@ public class autoIMU extends LinearOpMode {
     //this holds all of what it will do in auto
     public void doYourSTUFF() {
         if (opModeIsActive()) {
+            gyroDrive(0.3,2000,0,10);
             gyroTurn(0.3, 90, 5000);
             gyroDrive(0.3, 2000,90,10);
-            gyroTurn(0.3, 180, 5000);
-            gyroDrive(0.3, 2000,180,10);
+            gyroTurn(0.3, 90, 5000);
+            gyroDrive(0.3, 2000,90,10);
             gyroTurn(0.3, 270, 5000);
             gyroDrive(0.3, 2000,270,10);
             gyroTurn(0.3, 360, 5000);
