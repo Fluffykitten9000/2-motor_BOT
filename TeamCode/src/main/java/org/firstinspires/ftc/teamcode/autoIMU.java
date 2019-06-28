@@ -100,15 +100,15 @@ public class autoIMU extends LinearOpMode {
     //this holds all of what it will do in auto
     public void doYourSTUFF() {
         if (opModeIsActive()) {
-            gyroDrive(0.3,2000,0,10);
-            gyroTurn(0.3, 90, 5000);
-            gyroDrive(0.3, 2000,90,10);
-            gyroTurn(0.3, 90, 5000);
-            gyroDrive(0.3, 2000,90,10);
-            gyroTurn(0.3, 270, 5000);
-            gyroDrive(0.3, 2000,270,10);
-            gyroTurn(0.3, 360, 5000);
-            gyroDrive(0.3, 2000,360,10);
+            gyroDrive(0.2, 2000,0,5);
+            gyroTurn(0.2, 90, 5000);
+            gyroDrive(0.2, 2000,90,5);
+            gyroTurn(0.2, 180, 5000);
+            gyroDrive(0.2, 2000,180,5);
+            gyroTurn(0.2, 270, 5000);
+            gyroDrive(0.2, 2000,270,5);
+            gyroTurn(0.2, 360, 5000);
+            gyroDrive(0.2, 2000,360,5);
         }
     }
 
@@ -123,7 +123,7 @@ public class autoIMU extends LinearOpMode {
         double MY_DISTANCE = 0;
         intACC();
         //loop that makes shore that its on track
-        while (opModeIsActive()&&runtime.milliseconds()<time+T&&MY_DISTANCE<=distance) {
+        while (opModeIsActive()&&runtime.milliseconds()<time+T) {//&&MY_DISTANCE<=distance
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors----------------------\/----i don't know why it needs this to keep the front motors the same pace as the back
             fld.setPower(Range.clip(speed + 0.8 + Range.scale(angles.thirdAngle-angleOFF, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
