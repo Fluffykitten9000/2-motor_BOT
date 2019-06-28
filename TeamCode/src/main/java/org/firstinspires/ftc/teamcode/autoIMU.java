@@ -106,19 +106,20 @@ public class autoIMU extends LinearOpMode {
     //this holds all of what it will do in auto
     public void doYourSTUFF() {
         if (opModeIsActive()) {
-            gyroDrive(1, 5000,1000);
-            gyroTurn(1, 90, 5000);
-            gyroDrive(1, 5000,1000);
-            gyroTurn(1, 90, 5000);
-            gyroDrive(1, 5000,1000);
-            gyroTurn(1, 90, 5000);
-            gyroDrive(1, 5000,1000);
-            gyroTurn(1, 90, 5000);
+            gyroDrive(0.5, 1000,1);
+            gyroTurn(0.5, 90, 5000);
+            gyroDrive(0.5, 1000,1);
+            gyroTurn(0.5, 90, 5000);
+            gyroDrive(0.5, 1000,1);
+            gyroTurn(0.5, 90, 5000);
+            gyroDrive(0.5, 1000,1);
+            gyroTurn(0.5, 90, 5000);
         }
     }
 
     //drive using imu gyro
     public void gyroDrive(double speed, double time, double distance) {
+        double T = runtime.milliseconds();
         //number that tells the max rot in a frame
         double MAX_SCALE_ANGLE = 90;
         //number that tells the scale factor so we don't get in a feed back loop of doom
@@ -127,7 +128,7 @@ public class autoIMU extends LinearOpMode {
         double MY_DISTANCE = 0;
         intACC();
         //loop that makes shore that its on track
-        while (opModeIsActive()&&runtime.milliseconds()<time&&MY_DISTANCE<=distance) {
+        while (opModeIsActive()&&runtime.milliseconds()<time+T&&MY_DISTANCE<=distance) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors----------------------\/----i don't know why it needs this to keep the front motors the same pace as the back
             fld.setPower(Range.clip(speed + 0.8 + Range.scale(angles.thirdAngle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -1, 1));
@@ -150,6 +151,7 @@ public class autoIMU extends LinearOpMode {
     }
     
     public void gyroTurn(double speed,double angle,double time) {
+        double T = runtime.milliseconds();
         angle *= -1;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         //number that tells the max rot in a frame
@@ -157,11 +159,11 @@ public class autoIMU extends LinearOpMode {
         //number that tells the scale factor so we don't get in a feed back loop of doom
         double SCALED_NUM = 10;
         //number for accuracy limit
-        double LIMIT = 1;
+        double LIMIT = 0.8;
         //reset acc
         intACC();
         //loop that makes shore that its on track
-        while (opModeIsActive()&&runtime.milliseconds()<time) {
+        while (opModeIsActive()&&runtime.milliseconds()<time+T) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
             fld.setPower(Range.clip(Range.scale(angles.thirdAngle + angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed));
