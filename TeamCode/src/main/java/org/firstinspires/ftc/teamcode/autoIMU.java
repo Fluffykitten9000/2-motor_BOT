@@ -152,10 +152,10 @@ public class autoIMU extends LinearOpMode {
             //power the motors
             double left = Range.clip(Range.scale(angles.thirdAngle - angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed);
             double right = left*-1;//Range.clip(-Range.scale(angles.thirdAngle - angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed);
-            fld.setPower(left);
-            frd.setPower(right);
-            bld.setPower(left);
-            brd.setPower(right);
+            setSpeed(fld,left);
+            setSpeed(frd,right);
+            setSpeed(bld,left);
+            setSpeed(brd,right);
             if (Math.abs(angle-(angles.thirdAngle))<LIMIT) break;
         }
         //set motor power back to 0
