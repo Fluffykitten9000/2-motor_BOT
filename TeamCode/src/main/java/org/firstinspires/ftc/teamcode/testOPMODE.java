@@ -34,20 +34,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-
 @TeleOp(name="OP OF EPICNESSSSSS", group="EPIC STUFF")
 public class testOPMODE extends com.qualcomm.robotcore.eventloop.opmode.OpMode
 {
@@ -123,15 +109,16 @@ public class testOPMODE extends com.qualcomm.robotcore.eventloop.opmode.OpMode
         frd.setPower(frdP);
         bld.setPower(bldP);
         brd.setPower(brdP);
-
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("fldP", fldP);
-        telemetry.addData("frdP", frdP);
-        telemetry.addData("bldP", bldP);
-        telemetry.addData("brdP", brdP);
-
-        telemetry.update();
     }
+        private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
+            long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 5;
+            long THIS_MOTORS_SPEED;
+            long PAST_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
+            long NOW_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
+            THIS_MOTORS_SPEED=PAST_MOTOR_POSITION-NOW_MOTOR_POSITION;
+            telemetry.addData("THIS_MOTORS_SPEED",THIS_MOTORS_SPEED);
+            telemetry.update();
+        }
 
     @Override
     public void stop() {
