@@ -1,8 +1,6 @@
 //Hi! Java rocks!
 package org.firstinspires.ftc.teamcode;
 
-import android.test.mock.MockApplication;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -98,7 +96,7 @@ public class autoIMU extends LinearOpMode {
     //this holds all of what it will do in auto
     private void doYourSTUFF() {
         if (opModeIsActive()) {
-            gyroTurn(0.4, 90, 10000);
+            gyroTurn(1, 90, 10000);
         }
     }
 
@@ -151,7 +149,7 @@ public class autoIMU extends LinearOpMode {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             //power the motors
             double left = Range.clip(Range.scale(angles.thirdAngle - angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed);
-            double right = left*-1;//Range.clip(-Range.scale(angles.thirdAngle - angle, -MAX_SCALE_ANGLE, MAX_SCALE_ANGLE, -SCALED_NUM, SCALED_NUM), -speed, speed);
+            double right = left*-1;
             setSpeed(fld,left);
             setSpeed(frd,right);
             setSpeed(bld,left);
