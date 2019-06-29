@@ -113,7 +113,7 @@ public class IMUtest extends LinearOpMode {
         }
     }
     private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
-        long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 10;
+        long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 25;
         long THIS_MOTORS_SPEED;
         long PAST_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
         sleep(MILLISECOND_SLEEP_FOR_MOTOR_SPEED);
