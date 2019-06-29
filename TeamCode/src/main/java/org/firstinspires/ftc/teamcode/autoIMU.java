@@ -185,6 +185,7 @@ public class autoIMU extends LinearOpMode {
         return new double[]{acc[0]-accOff[0], acc[1]-accOff[1], acc[2]-accOff[2]};
     }
     private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
-        
+        long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 5;
+        sleep(MILLISECOND_SLEEP_FOR_MOTOR_SPEED);
     }
 }
