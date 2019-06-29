@@ -154,7 +154,7 @@ public class autoIMU extends LinearOpMode {
             frd.setPower(right);
             bld.setPower(left);
             brd.setPower(right);
-            if (Math.abs(angle-(angles.thirdAngle))<LIMIT) {break;}
+            if (Math.abs(angle-(angles.thirdAngle))<LIMIT) break;
             sleep(1);
         }
         //set motor power back to 0
