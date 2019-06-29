@@ -1,6 +1,8 @@
 //Hi! Java rocks!
 package org.firstinspires.ftc.teamcode;
 
+import android.test.mock.MockApplication;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -184,13 +186,17 @@ public class autoIMU extends LinearOpMode {
         imu.stopAccelerationIntegration();
         return new double[]{acc[0]-accOff[0], acc[1]-accOff[1], acc[2]-accOff[2]};
     }
-    private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
+    private void setSpeed(DcMotor MOTOR_REFERENCE, long WANTED_SPEED) {
+        long SCALE = 90;
         long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 25;
+        long OFF_BY_THIS;
         long THIS_MOTORS_SPEED;
         long PAST_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
         sleep(MILLISECOND_SLEEP_FOR_MOTOR_SPEED);
         long NOW_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
-        THIS_MOTORS_SPEED=PAST_MOTOR_POSITION-NOW_MOTOR_POSITION;
+        THIS_MOTORS_SPEED=NOW_MOTOR_POSITION-PAST_MOTOR_POSITION;
+        OFF_BY_THIS=WANTED_SPEED-THIS_MOTORS_SPEED;
+        MOTOR_REFERENCE.setPower(Range.scale(Range.clip(OFF_BY_THIS,-90,90),-SCALE,SCALE,-1,1));
         telemetry.addData("THIS_MOTORS_SPEED",THIS_MOTORS_SPEED);
         telemetry.update();
     }
