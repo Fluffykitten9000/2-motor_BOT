@@ -50,8 +50,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="OP OF EPICNESSSSSS", group="EPIC STUFF")
-public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode
-{
+public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor fld = null;
