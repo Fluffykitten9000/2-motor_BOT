@@ -186,6 +186,12 @@ public class autoIMU extends LinearOpMode {
     }
     private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
         long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 5;
+        long THIS_MOTORS_SPEED;
+        long PAST_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
         sleep(MILLISECOND_SLEEP_FOR_MOTOR_SPEED);
+        long NOW_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
+        THIS_MOTORS_SPEED=PAST_MOTOR_POSITION-NOW_MOTOR_POSITION;
+        
+
     }
 }
