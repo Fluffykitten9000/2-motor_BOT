@@ -191,6 +191,7 @@ public class autoIMU extends LinearOpMode {
         sleep(MILLISECOND_SLEEP_FOR_MOTOR_SPEED);
         long NOW_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
         THIS_MOTORS_SPEED=PAST_MOTOR_POSITION-NOW_MOTOR_POSITION;
-        MOTOR_REFERENCE.setPower(THIS_MOTORS_SPEED);
+        telemetry.addData("THIS_MOTORS_SPEED",THIS_MOTORS_SPEED);
+        telemetry.update();
     }
 }
