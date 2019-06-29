@@ -155,7 +155,6 @@ public class autoIMU extends LinearOpMode {
             bld.setPower(left);
             brd.setPower(right);
             if (Math.abs(angle-(angles.thirdAngle))<LIMIT) break;
-            sleep(1);
         }
         //set motor power back to 0
         fld.setPower(0);
@@ -184,5 +183,8 @@ public class autoIMU extends LinearOpMode {
         acc[2] = gravity.zAccel;
         imu.stopAccelerationIntegration();
         return new double[]{acc[0]-accOff[0], acc[1]-accOff[1], acc[2]-accOff[2]};
+    }
+    private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
+        
     }
 }
