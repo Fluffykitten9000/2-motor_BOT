@@ -55,6 +55,11 @@ public class IMUtest extends LinearOpMode {
     private DcMotor brd = null;
     private double acc[] = new double[3];
 
+    double fldS;
+    double frdS;
+    double bldS;
+    double brdS;
+
     BNO055IMU imu;
 
     Orientation angles;
@@ -109,17 +114,24 @@ public class IMUtest extends LinearOpMode {
     }
     public void doYourSTUFF() {
         while (opModeIsActive()) {
-            setSpeed(frd,10);
+            if (setSpeed(fld,10)>fldS) fldS=setSpeed(fld, 10);
+            if (setSpeed(frd,10)<frdS) frdS=setSpeed(frd, 10);
+            if (setSpeed(bld,10)>bldS) bldS=setSpeed(bld, 10);
+            if (setSpeed(brd,10)<brdS) brdS=setSpeed(brd, 10);
+            telemetry.addData("fldS",fldS);
+            telemetry.addData("frdS",frdS);
+            telemetry.addData("bldS",bldS);
+            telemetry.addData("brdS",brdS);
+            telemetry.update();
         }
     }
-    private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
+    private long setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
         long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 25;
         long THIS_MOTORS_SPEED;
         long PAST_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
         sleep(MILLISECOND_SLEEP_FOR_MOTOR_SPEED);
         long NOW_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
         THIS_MOTORS_SPEED=PAST_MOTOR_POSITION-NOW_MOTOR_POSITION;
-        telemetry.addData("THIS_MOTORS_SPEED",THIS_MOTORS_SPEED);
-        telemetry.update();
+        return THIS_MOTORS_SPEED;
     }
 }
