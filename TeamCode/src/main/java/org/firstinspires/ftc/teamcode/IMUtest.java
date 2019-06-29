@@ -109,15 +109,17 @@ public class IMUtest extends LinearOpMode {
     }
     public void doYourSTUFF() {
         while (opModeIsActive()) {
-            imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
-            angles = imu.getAngularOrientation();
-            gravity = imu.getGravity();
-            telemetry.addLine()
-            .addData("acc", gravity);
-            telemetry.addLine()
-            .addData("rot", angles);
-            telemetry.update();
-            imu.stopAccelerationIntegration();
+            setSpeed(frd,10);
         }
+    }
+    private void setSpeed(DcMotor MOTOR_REFERENCE, double SPEED) {
+        long MILLISECOND_SLEEP_FOR_MOTOR_SPEED = 5;
+        long THIS_MOTORS_SPEED;
+        long PAST_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
+        sleep(MILLISECOND_SLEEP_FOR_MOTOR_SPEED);
+        long NOW_MOTOR_POSITION = MOTOR_REFERENCE.getCurrentPosition();
+        THIS_MOTORS_SPEED=PAST_MOTOR_POSITION-NOW_MOTOR_POSITION;
+        telemetry.addData("THIS_MOTORS_SPEED",THIS_MOTORS_SPEED);
+        telemetry.update();
     }
 }
