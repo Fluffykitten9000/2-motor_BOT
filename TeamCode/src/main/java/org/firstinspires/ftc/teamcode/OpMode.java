@@ -90,14 +90,19 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     @Override
     public void loop() {
 
+        angles = imu.getAngularOrientation()
+
         double leftDP;
         double rightDP;
+
+        double rightIMUp = ;
+        double leftIMUp;
 
         double leftUP = gamepad1.left_stick_y;
         double rightUP = gamepad1.right_stick_y;
 
-        leftDP = Range.clip(leftUP, -1.0, 1.0);
-        rightDP = Range.clip(rightUP, -1.0, 1.0);
+        leftDP = Range.clip(leftUP + leftIMUp, -1.0, 1.0);
+        rightDP = Range.clip(rightUP + rightIMUp, -1.0, 1.0);
 
         fld.setPower(leftDP);
         frd.setPower(rightDP);
