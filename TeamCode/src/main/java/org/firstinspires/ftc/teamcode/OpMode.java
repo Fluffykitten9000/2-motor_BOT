@@ -36,6 +36,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="OP OF EPICNESSSSSS", group="EPIC STUFF")
@@ -90,13 +93,13 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     @Override
     public void loop() {
 
-        angles = imu.getAngularOrientation()
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
         double leftDP;
         double rightDP;
 
-        double rightIMUp = ;
-        double leftIMUp;
+        double rightIMUp = angles.firstAngle/2.5;
+        double leftIMUp = (angles.firstAngle/2.5)*-1;
 
         double leftUP = gamepad1.left_stick_y;
         double rightUP = gamepad1.right_stick_y;
