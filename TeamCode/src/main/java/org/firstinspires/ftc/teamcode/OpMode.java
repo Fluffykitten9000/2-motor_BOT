@@ -62,6 +62,9 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
         frd = hardwareMap.get(DcMotor.class, "frd");
         fld = hardwareMap.get(DcMotor.class, "fld");
         brd = hardwareMap.get(DcMotor.class, "brd");
@@ -87,31 +90,21 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     @Override
     public void loop() {
 
-        double fldP;
-        double frdP;
-        double bldP;
-        double brdP;
+        double leftDP;
+        double rightDP;
 
         double drive = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
-        double strafe = gamepad1.left_stick_x;
 
-        fldP = Range.clip(drive + turn + strafe, -1.0, 1.0);
-        frdP = Range.clip(drive - turn - strafe, -1.0, 1.0);
-        bldP = Range.clip(drive + turn - strafe, -1.0, 1.0);
-        brdP = Range.clip(drive - turn + strafe, -1.0, 1.0);
+        leftDP = Range.clip(drive + turn, -1.0, 1.0);
+        rightDP = Range.clip(drive - turn, -1.0, 1.0);
 
-        fld.setPower(fldP);
-        frd.setPower(frdP);
-        bld.setPower(bldP);
-        brd.setPower(brdP);
+        fld.setPower(leftDP);
+        frd.setPower(rightDP);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("fldP", fldP);
-        telemetry.addData("frdP", frdP);
-        telemetry.addData("bldP", bldP);
-        telemetry.addData("brdP", brdP);
-
+        telemetry.addData("leftDP", leftDP);
+        telemetry.addData("rightDP", rightDP);
         telemetry.update();
     }
 
