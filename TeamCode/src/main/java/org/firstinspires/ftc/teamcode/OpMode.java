@@ -30,9 +30,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -40,7 +40,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="OP OF EPICNESSSSSS", group="EPIC STUFF")
 public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
-    // Declare OpMode members.
+
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor fld = null;
     private DcMotor frd = null;
@@ -53,7 +53,14 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         frd = hardwareMap.get(DcMotor.class, "frd");
         fld = hardwareMap.get(DcMotor.class, "fld");
@@ -79,7 +86,7 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     @Override
     public void loop() {
-        
+
         double fldP;
         double frdP;
         double bldP;
