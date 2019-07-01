@@ -45,10 +45,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor fld = null;
-    private DcMotor frd = null;
-    private DcMotor bld = null;
-    private DcMotor brd = null;
+    private DcMotor ld = null;
+    private DcMotor rd = null;
 
     BNO055IMU imu;
 
@@ -68,17 +66,15 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        frd = hardwareMap.get(DcMotor.class, "frd");
-        fld = hardwareMap.get(DcMotor.class, "fld");
-        brd = hardwareMap.get(DcMotor.class, "brd");
-        bld = hardwareMap.get(DcMotor.class, "bld");
+        rd = hardwareMap.get(DcMotor.class, "rd");
+        ld = hardwareMap.get(DcMotor.class, "ld");
 
-        fld.setDirection(DcMotor.Direction.REVERSE);
-        frd.setDirection(DcMotor.Direction.REVERSE);
-        bld.setDirection(DcMotor.Direction.FORWARD);
-        brd.setDirection(DcMotor.Direction.REVERSE);
+        ld.setDirection(DcMotor.Direction.FORWARD);
+        rd.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
     }
 
     @Override
@@ -90,6 +86,9 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         runtime.reset();
     }
 
+    private double rightIMUp = angles.firstAngle/2.5;
+    private double leftIMUp = (angles.firstAngle/2.5)*-1;
+
     @Override
     public void loop() {
 
@@ -98,17 +97,14 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         double leftDP;
         double rightDP;
 
-        double rightIMUp = angles.firstAngle/2.5;
-        double leftIMUp = (angles.firstAngle/2.5)*-1;
-
         double leftUP = gamepad1.left_stick_y;
         double rightUP = gamepad1.right_stick_y;
 
         leftDP = Range.clip(leftUP + leftIMUp, -1.0, 1.0);
         rightDP = Range.clip(rightUP + rightIMUp, -1.0, 1.0);
 
-        fld.setPower(leftDP);
-        frd.setPower(rightDP);
+        ld.setPower(leftDP);
+        rd.setPower(rightDP);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("leftDP", leftDP);
