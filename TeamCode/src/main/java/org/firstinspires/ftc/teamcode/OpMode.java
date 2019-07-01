@@ -93,11 +93,11 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         double leftDP;
         double rightDP;
 
-        double drive = -gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x;
+        double leftUP = gamepad1.left_stick_y;
+        double rightUP = gamepad1.right_stick_y;
 
-        leftDP = Range.clip(drive + turn, -1.0, 1.0);
-        rightDP = Range.clip(drive - turn, -1.0, 1.0);
+        leftDP = Range.clip(leftUP, -1.0, 1.0);
+        rightDP = Range.clip(rightUP, -1.0, 1.0);
 
         fld.setPower(leftDP);
         frd.setPower(rightDP);
