@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.text.BreakIterator;
+
 @TeleOp(name="OP OF EPIC", group="EPIC STUFF")
 public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
@@ -30,9 +32,10 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     private double IMUp = 0;
 
-    private double div = 20;
-    private double SMALL_POWER_AMP;
-    private double ANGLE_OFFSET = 0;
+    private double powerMULT = 1;
+    private double[] ANGLE_WANTED_FOR_MOVEMENT = {0,0};
+    private double div = 10;
+    private double[] ANGLE_OFFSET = {0,0};
 
     @Override
     public void init() {
@@ -74,8 +77,10 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
         if (gamepad1.dpad_up&&Math.round(STATE)==0) div+=.1;
         if (gamepad1.dpad_down&&Math.round(STATE)==0) div-=.1;
-        if (gamepad1.dpad_up&&Math.round(STATE)==1) ANGLE_OFFSET=.0001;
-        if (gamepad1.dpad_down&&Math.round(STATE)==1) ANGLE_OFFSET=.0001;
+        if (gamepad1.dpad_up&&Math.round(STATE)==1) ANGLE_OFFSET[0]+=.01;
+        if (gamepad1.dpad_down&&Math.round(STATE)==1) ANGLE_OFFSET[0]-=.01;
+        if (gamepad1.dpad_up&&Math.round(STATE)==2) powerMULT+=.001;
+        if (gamepad1.dpad_down&&Math.round(STATE)==2) powerMULT-=.001;
 
         angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
@@ -86,30 +91,36 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         double leftDP;
         double rightDP;
 
-        double leftUP = -gamepad1.left_stick_y;
-        double rightUP = gamepad1.right_stick_y;
+        ANGLE_WANTED_FOR_MOVEMENT[0] = gamepad1.left_stick_y/15;
+        ANGLE_WANTED_FOR_MOVEMENT[0]-=ANGLE_WANTED_FOR_MOVEMENT[1] ;
 
-        IMUp+=(off/div)+ANGLE_OFFSET;
+        IMUp+=(off/div)+ANGLE_OFFSET[0]+ANGLE_WANTED_FOR_MOVEMENT[0];
 
-        if (IMUp>0&&IMUp<0.0001) IMUp=0.001;
-        if (IMUp>0&&IMUp<-0.0001) IMUp=-0.001;
-
-        leftDP = Range.clip(leftUP + IMUp, -1.0, 1.0);
-        rightDP = Range.clip(rightUP - IMUp, -1.0, 1.0);
+        leftDP = Range.clip(IMUp*powerMULT, -1.0, 1.0);
+        rightDP = Range.clip(-IMUp*powerMULT, -1.0, 1.0);
 
         ld.setPower(leftDP);
         rd.setPower(rightDP);
 
         telemetry.addData("leftDP", leftDP);
         telemetry.addData("rightDP", rightDP);
-        telemetry.addData("IMUp", IMUp);
+        telemetry.addData("AWFM", ANGLE_WANTED_FOR_MOVEMENT[1]);
         if (Math.round(STATE)==0) {
             telemetry.addData("Dpad STATE", "change div =" + div);
         }
         if (Math.round(STATE)==1) {
-            telemetry.addData("Dpad STATE", "change ANGLE_OFFSET =" + ANGLE_OFFSET);
+            telemetry.addData("Dpad STATE", "change ANGLE_OFFSET =" + ANGLE_OFFSET[1]);
+        }
+        if (Math.round(STATE)==2) {
+            telemetry.addData("Dpad STATE", "change powerMULT =" + powerMULT);
         }
         telemetry.update();
+        ANGLE_OFFSET[1]+=ANGLE_OFFSET[0];
+        ANGLE_WANTED_FOR_MOVEMENT[1]+=ANGLE_WANTED_FOR_MOVEMENT[0];
+        ANGLE_OFFSET[0]=0;
+        ANGLE_WANTED_FOR_MOVEMENT[0]=0;
+
+        if (Math.abs(off)>8) stop();
     }
 
     @Override
