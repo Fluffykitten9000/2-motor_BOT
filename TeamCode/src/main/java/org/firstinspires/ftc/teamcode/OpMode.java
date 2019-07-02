@@ -26,7 +26,9 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     private double LAST_IMU_ANGLE = 0;
 
-    double SCALE = 4;
+    private double div = 100;
+
+    private double IMUp = 0;
 
     @Override
     public void init() {
@@ -63,14 +65,12 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     @Override
     public void loop() {
 
-        if (gamepad1.dpad_up) SCALE+=.01;
-        if (gamepad1.dpad_down) SCALE-=.01;
-
-        double SCALED = 1;
+        if (gamepad1.dpad_up) div+=.1;
+        if (gamepad1.dpad_down) div-=.1;
 
         angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
-        double IMUp = LAST_IMU_ANGLE - angles.secondAngle;
+        double off = LAST_IMU_ANGLE - angles.secondAngle;
 
         LAST_IMU_ANGLE = angles.secondAngle;
 
@@ -80,10 +80,10 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         double leftUP = gamepad1.left_stick_y;
         double rightUP = gamepad1.right_stick_y;
 
-        if (IMUp>-1&&IMUp<0.1) IMUp=0;
+        IMUp+=off/div;
 
-        leftDP = Range.clip(leftUP + Range.scale(IMUp, -SCALE, SCALE, -SCALED, SCALED), -1.0, 1.0);
-        rightDP = Range.clip(rightUP - Range.scale(IMUp, -SCALE, SCALE, -SCALED, SCALED), -1.0, 1.0);
+        leftDP = Range.clip(leftUP + IMUp, -1.0, 1.0);
+        rightDP = Range.clip(rightUP - IMUp, -1.0, 1.0);
 
         ld.setPower(leftDP);
         rd.setPower(rightDP);
@@ -91,7 +91,7 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("leftDP", leftDP);
         telemetry.addData("rightDP", rightDP);
-        telemetry.addData("SCALE", SCALE);
+        telemetry.addData("IMUp", IMUp);
         telemetry.update();
     }
 
