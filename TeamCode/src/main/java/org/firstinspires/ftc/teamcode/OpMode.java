@@ -28,10 +28,10 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     private double LAST_IMU_ANGLE = 0;
 
-    private double div = 20;
-
     private double IMUp = 0;
 
+    private double div = 20;
+    private double SMALL_POWER_AMP;
     private double ANGLE_OFFSET = 0;
 
     @Override
