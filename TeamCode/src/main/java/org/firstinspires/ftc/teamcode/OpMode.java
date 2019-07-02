@@ -100,6 +100,12 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         telemetry.addData("leftDP", leftDP);
         telemetry.addData("rightDP", rightDP);
         telemetry.addData("IMUp", IMUp);
+        if (Math.round(STATE)==0) {
+            telemetry.addData("Dpad STATE", "change div");
+        }
+        if (Math.round(STATE)==1) {
+            telemetry.addData("Dpad STATE", "change ANGLE_OFFSET");
+        }
         telemetry.update();
     }
 
