@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 @TeleOp(name="OP OF EPIC", group="EPIC STUFF")
 public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
@@ -72,7 +74,8 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     @Override
     public void loop() {
 
-        imu.startAccelerationIntegration();
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
+        gravity = imu.getGravity();
 
         if (gamepad1.dpad_left) STATE-=0.1;
         if (gamepad1.dpad_right) STATE+=0.1;
@@ -121,6 +124,8 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         ANGLE_WANTED_FOR_MOVEMENT[1]+=ANGLE_WANTED_FOR_MOVEMENT[0];
         ANGLE_OFFSET[0]=0;
         ANGLE_WANTED_FOR_MOVEMENT[0]=0;
+
+        imu.stopAccelerationIntegration();
     }
 
     @Override
