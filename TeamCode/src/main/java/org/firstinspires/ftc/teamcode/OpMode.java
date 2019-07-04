@@ -31,7 +31,10 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     private double div = 10;
     private double[] ANGLE_OFFSET = {0,0};
 
-    private double POWER_LEANING_TIME;
+    private ElapsedTime POWER_LEANING_TIME = new ElapsedTime();
+    private boolean LEANING_WAY = true;
+    private double LEANING_AUTHORITY = 0.05;
+
 
     @Override
     public void init() {
@@ -51,7 +54,7 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         ld = hardwareMap.get(DcMotor.class, "ld");
 
         ld.setDirection(DcMotor.Direction.FORWARD);
-        rd.setDirection(DcMotor.Direction.REVERSE);
+        rd.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -72,10 +75,12 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         if (gamepad1.dpad_left) STATE-=0.2;
         if (gamepad1.dpad_right) STATE+=0.2;
 
-        if (gamepad1.dpad_up&&Math.round(STATE)==0) div+=.1;
-        if (gamepad1.dpad_down&&Math.round(STATE)==0) div-=.1;
-        if (gamepad1.dpad_up&&Math.round(STATE)==1) ANGLE_OFFSET[0]+=.1;
-        if (gamepad1.dpad_down&&Math.round(STATE)==1) ANGLE_OFFSET[0]-=.1;
+        if (gamepad1.dpad_up&&Math.round(STATE)==0) div+=0.1;
+        if (gamepad1.dpad_down&&Math.round(STATE)==0) div-=0.1;
+        if (gamepad1.dpad_up&&Math.round(STATE)==1) ANGLE_OFFSET[0]+=0.05;
+        if (gamepad1.dpad_down&&Math.round(STATE)==1) ANGLE_OFFSET[0]-=0.05;
+        if (gamepad1.dpad_up&&Math.round(STATE)==2) LEANING_AUTHORITY+=0.002;
+        if (gamepad1.dpad_down&&Math.round(STATE)==2) LEANING_AUTHORITY-=0.002;
 
         angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
@@ -89,10 +94,10 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         ANGLE_WANTED_FOR_MOVEMENT[0] = gamepad1.left_stick_y/6;
         ANGLE_WANTED_FOR_MOVEMENT[0]-=ANGLE_WANTED_FOR_MOVEMENT[1];
 
-        IMUp+=(off+ANGLE_OFFSET[0]+ANGLE_WANTED_FOR_MOVEMENT[0]/div);
+        IMUp+=(off+ANGLE_OFFSET[0]+ANGLE_WANTED_FOR_MOVEMENT[0])/div;
 
-        leftDP = Range.clip(IMUp, -1.0, 1.0);
-        rightDP = Range.clip(-IMUp, -1.0, 1.0);
+        leftDP = Range.clip((IMUp+ld.getPower())/2, -1.0, 1.0);
+        rightDP = Range.clip((IMUp+rd.getPower())/2, -1.0, 1.0);
 
         ld.setPower(leftDP);
         rd.setPower(rightDP);
@@ -108,6 +113,9 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         if (Math.round(STATE)==1) {
             telemetry.addData("Dpad STATE", "change ANGLE_OFFSET =" + ANGLE_OFFSET[1]);
         }
+        if (Math.round(STATE)==2) {
+            telemetry.addData("Dpad STATE", "change LEANING_AUTHORITY" + LEANING_AUTHORITY);
+        }
         telemetry.update();
         ANGLE_OFFSET[1]+=ANGLE_OFFSET[0];
         ANGLE_WANTED_FOR_MOVEMENT[1]+=ANGLE_WANTED_FOR_MOVEMENT[0];
@@ -119,6 +127,18 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     public void stop() {
     }
     private void UPDATE_POWER_LEANING_TIME() {
-
+        double POWER_IN_ALL = (ld.getPower()+rd.getPower())/2;
+        if (POWER_IN_ALL>=0==LEANING_WAY) {
+            LEANING_WAY=!LEANING_WAY;
+            POWER_LEANING_TIME.reset();
+        }
+        if (POWER_LEANING_TIME.milliseconds()>=300&&LEANING_WAY) {
+            ld.setPower(ld.getPower()-LEANING_AUTHORITY);
+            rd.setPower(rd.getPower()-LEANING_AUTHORITY);
+        }
+        if (POWER_LEANING_TIME.milliseconds()>=300&&!LEANING_WAY) {
+            ld.setPower(ld.getPower()+LEANING_AUTHORITY);
+            rd.setPower(rd.getPower()+LEANING_AUTHORITY);
+        }
     }
 }
