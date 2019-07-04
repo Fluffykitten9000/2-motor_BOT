@@ -7,14 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 @TeleOp(name="OP OF EPIC", group="EPIC STUFF")
 public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
@@ -27,8 +23,6 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     private BNO055IMU imu;
 
-    private Orientation angles;
-
     private double LAST_IMU_ANGLE = 0;
 
     private double IMUp = 0;
@@ -37,13 +31,15 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     private double div = 10;
     private double[] ANGLE_OFFSET = {0,0};
 
+    private double POWER_LEANING_TIME;
+
     @Override
     public void init() {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
@@ -71,14 +67,15 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     @Override
     public void loop() {
+        Orientation angles;
 
         if (gamepad1.dpad_left) STATE-=0.2;
         if (gamepad1.dpad_right) STATE+=0.2;
 
         if (gamepad1.dpad_up&&Math.round(STATE)==0) div+=.1;
         if (gamepad1.dpad_down&&Math.round(STATE)==0) div-=.1;
-        if (gamepad1.dpad_up&&Math.round(STATE)==1) ANGLE_OFFSET[0]+=.01;
-        if (gamepad1.dpad_down&&Math.round(STATE)==1) ANGLE_OFFSET[0]-=.01;
+        if (gamepad1.dpad_up&&Math.round(STATE)==1) ANGLE_OFFSET[0]+=.1;
+        if (gamepad1.dpad_down&&Math.round(STATE)==1) ANGLE_OFFSET[0]-=.1;
 
         angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
@@ -90,15 +87,17 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         double rightDP;
 
         ANGLE_WANTED_FOR_MOVEMENT[0] = gamepad1.left_stick_y/6;
-        ANGLE_WANTED_FOR_MOVEMENT[0]-=ANGLE_WANTED_FOR_MOVEMENT[1] ;
+        ANGLE_WANTED_FOR_MOVEMENT[0]-=ANGLE_WANTED_FOR_MOVEMENT[1];
 
-        IMUp+=(off/div)+ANGLE_OFFSET[0]+ANGLE_WANTED_FOR_MOVEMENT[0];
+        IMUp+=(off+ANGLE_OFFSET[0]+ANGLE_WANTED_FOR_MOVEMENT[0]/div);
 
         leftDP = Range.clip(IMUp, -1.0, 1.0);
         rightDP = Range.clip(-IMUp, -1.0, 1.0);
 
         ld.setPower(leftDP);
         rd.setPower(rightDP);
+
+        UPDATE_POWER_LEANING_TIME();
 
         telemetry.addData("leftDP", leftDP);
         telemetry.addData("rightDP", rightDP);
@@ -118,5 +117,8 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
     @Override
     public void stop() {
+    }
+    private void UPDATE_POWER_LEANING_TIME() {
+
     }
 }
