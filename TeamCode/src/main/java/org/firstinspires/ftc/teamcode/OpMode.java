@@ -28,13 +28,11 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     private BNO055IMU imu;
 
     private Orientation angles;
-    private Acceleration gravity;
 
     private double LAST_IMU_ANGLE = 0;
 
     private double IMUp = 0;
 
-    private double powerMULT = 1;
     private double[] ANGLE_WANTED_FOR_MOVEMENT = {0,0};
     private double div = 10;
     private double[] ANGLE_OFFSET = {0,0};
@@ -74,18 +72,13 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
     @Override
     public void loop() {
 
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
-        gravity = imu.getGravity();
-
-        if (gamepad1.dpad_left) STATE-=0.1;
-        if (gamepad1.dpad_right) STATE+=0.1;
+        if (gamepad1.dpad_left) STATE-=0.2;
+        if (gamepad1.dpad_right) STATE+=0.2;
 
         if (gamepad1.dpad_up&&Math.round(STATE)==0) div+=.1;
         if (gamepad1.dpad_down&&Math.round(STATE)==0) div-=.1;
         if (gamepad1.dpad_up&&Math.round(STATE)==1) ANGLE_OFFSET[0]+=.01;
         if (gamepad1.dpad_down&&Math.round(STATE)==1) ANGLE_OFFSET[0]-=.01;
-        if (gamepad1.dpad_up&&Math.round(STATE)==2) powerMULT+=.001;
-        if (gamepad1.dpad_down&&Math.round(STATE)==2) powerMULT-=.001;
 
         angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
@@ -96,13 +89,13 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         double leftDP;
         double rightDP;
 
-        ANGLE_WANTED_FOR_MOVEMENT[0] = gamepad1.left_stick_y/15;
+        ANGLE_WANTED_FOR_MOVEMENT[0] = gamepad1.left_stick_y/6;
         ANGLE_WANTED_FOR_MOVEMENT[0]-=ANGLE_WANTED_FOR_MOVEMENT[1] ;
 
         IMUp+=(off/div)+ANGLE_OFFSET[0]+ANGLE_WANTED_FOR_MOVEMENT[0];
 
-        leftDP = Range.clip(IMUp*powerMULT, -1.0, 1.0);
-        rightDP = Range.clip(-IMUp*powerMULT, -1.0, 1.0);
+        leftDP = Range.clip(IMUp, -1.0, 1.0);
+        rightDP = Range.clip(-IMUp, -1.0, 1.0);
 
         ld.setPower(leftDP);
         rd.setPower(rightDP);
@@ -116,16 +109,11 @@ public class OpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
         if (Math.round(STATE)==1) {
             telemetry.addData("Dpad STATE", "change ANGLE_OFFSET =" + ANGLE_OFFSET[1]);
         }
-        if (Math.round(STATE)==2) {
-            telemetry.addData("Dpad STATE", "change powerMULT =" + powerMULT);
-        }
         telemetry.update();
         ANGLE_OFFSET[1]+=ANGLE_OFFSET[0];
         ANGLE_WANTED_FOR_MOVEMENT[1]+=ANGLE_WANTED_FOR_MOVEMENT[0];
         ANGLE_OFFSET[0]=0;
         ANGLE_WANTED_FOR_MOVEMENT[0]=0;
-
-        imu.stopAccelerationIntegration();
     }
 
     @Override
